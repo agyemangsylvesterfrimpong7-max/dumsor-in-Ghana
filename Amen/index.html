@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dumsor Watch — Ghana Power Intelligence</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
+    <style>
+        /* ── CSS Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ghana-red: #CE1126;
+            --ghana-yellow: #FCD116;
+            --ghana-green: #006B3F;
+            --ghana-black: #000000;
+
+            --bg-primary: #0B0E14;
+            --bg-secondary: #141A24;
+            --bg-card: #1C2533;
+            --bg-card-hover: #253042;
+            --text-primary: #F0F4FA;
+            --text-secondary: #9AB0CC;
+            --text-muted: #6A7F99;
+            --border-color: #2A3A4E;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --sidebar-width: 260px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--ghana-red);
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 18px;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--ghana-red), var(--ghana-yellow));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--ghana-black);
+            font-weight: 800;
+        }
+
+        .sidebar-brand h1 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+        .sidebar-brand h1 span {
+            color: var(--ghana-yellow);
+        }
+        .sidebar-brand small {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            padding: 16px 12px 6px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-nav a i {
+            width: 22px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--ghana-red);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(206, 17, 38, 0.35);
+        }
+
+        .sidebar-nav a .badge {
+            margin-left: auto;
+            background: var(--ghana-yellow);
+            color: var(--ghana-black);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-footer .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.85);
+            }
+        }
+
+        /* ── Main Content ── */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 28px 36px 40px;
+            min-height: 100vh;
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .topbar-left h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .topbar-left p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-right .datetime {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .topbar-right .btn-primary {
+            background: var(--ghana-red);
+            border: none;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .topbar-right .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(206, 17, 38, 0.4);
+        }
+
+        /* ── Stats Grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stat-card .stat-value {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 6px 0 2px;
+            letter-spacing: -0.5px;
+        }
+        .stat-card .stat-value.green {
+            color: #4ade80;
+        }
+        .stat-card .stat-value.red {
+            color: #f87171;
+        }
+        .stat-card .stat-value.yellow {
+            color: #facc15;
+        }
+        .stat-card .stat-value.blue {
+            color: #60a5fa;
+        }
+
+        .stat-card .stat-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+        }
+        .stat-card .stat-change i {
+            font-size: 10px;
+        }
+
+        /* ── Panels ── */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px 26px;
+            margin-bottom: 28px;
+            transition: var(--transition);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h3 {
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .panel-header h3 i {
+            color: var(--ghana-yellow);
+        }
+
+        .panel-header .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .panel-header .panel-actions button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .panel-header .panel-actions button:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        /* ── Two-column layout ── */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 1024px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Map (canvas-based) ── */
+        .map-container {
+            position: relative;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            height: 280px;
+            border: 1px solid var(--border-color);
+        }
+
+        .map-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            pointer-events: none;
+        }
+        .map-overlay i {
+            color: var(--ghana-yellow);
+            margin-right: 6px;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            display: flex;
+            gap: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .map-legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .map-legend .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.green {
+            background: #4ade80;
+        }
+        .dot.red {
+            background: #f87171;
+        }
+        .dot.yellow {
+            background: #facc15;
+        }
+
+        /* ── Report Form ── */
+        .report-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .report-form .form-group {
+            flex: 1 1 160px;
+        }
+
+        .report-form label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .report-form select,
+        .report-form input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .report-form select:focus,
+        .report-form input:focus {
+            outline: none;
+            border-color: var(--ghana-yellow);
+            box-shadow: 0 0 0 3px rgba(252, 209, 22, 0.15);
+        }
+
+        .report-form .btn-report {
+            padding: 10px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            margin-top: 18px;
+        }
+
+        .btn-report.off {
+            background: #f87171;
+            color: #7f1d1d;
+        }
+        .btn-report.off:hover {
+            background: #ef4444;
+            transform: scale(1.02);
+        }
+
+        .btn-report.on {
+            background: #4ade80;
+            color: #14532d;
+        }
+        .btn-report.on:hover {
+            background: #22c55e;
+            transform: scale(1.02);
+        }
+
+        .btn-report:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ── History Table ── */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        table thead {
+            background: var(--bg-secondary);
+        }
+
+        table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge.off {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+        }
+        .status-badge.on {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+        .status-badge.predicted {
+            background: rgba(250, 204, 21, 0.2);
+            color: #facc15;
+        }
+
+        /* ── Prediction Card ── */
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .prediction-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .prediction-item .time {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ghana-yellow);
+        }
+        .prediction-item .location {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .prediction-item .prob {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .prediction-item .prob strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Sensor Status ── */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .sensor-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sensor-card .sensor-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .sensor-card .sensor-info {
+            flex: 1;
+        }
+        .sensor-card .sensor-info .name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .sensor-card .sensor-info .status {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .sensor-card .sensor-info .status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.online {
+            background: #4ade80;
+        }
+        .dot.offline {
+            background: #f87171;
+        }
+        .dot.pending {
+            background: #facc15;
+        }
+
+        /* ── Chart wrapper ── */
+        .chart-wrapper {
+            height: 200px;
+            position: relative;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px 16px;
+            }
+
+            .topbar-left h2 {
+                font-size: 20px;
+            }
+            .topbar-right .datetime {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .report-form {
+                flex-direction: column;
+            }
+            .report-form .form-group {
+                flex: 1 1 100%;
+            }
+            .report-form .btn-report {
+                width: 100%;
+                justify-content: center;
+                margin-top: 4px;
+            }
+
+            .panel {
+                padding: 18px 16px;
+            }
+
+            .prediction-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .sensor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .map-container {
+                height: 200px;
+            }
+
+            .hamburger {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Hamburger ── */
+        .hamburger {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .hamburger:hover {
+            background: var(--bg-card-hover);
+        }
+
+        /* ── Utilities ── */
+        .mt-0 {
+            margin-top: 0;
+        }
+        .mb-0 {
+            margin-bottom: 0;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        /* ── Toast ── */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 14px 22px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 280px;
+            animation: slideUp 0.35s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .toast.success {
+            border-left: 4px solid #4ade80;
+        }
+        .toast.error {
+            border-left: 4px solid #f87171;
+        }
+        .toast.info {
+            border-left: 4px solid #60a5fa;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+        .toast.success i {
+            color: #4ade80;
+        }
+        .toast.error i {
+            color: #f87171;
+        }
+        .toast.info i {
+            color: #60a5fa;
+        }
+
+        .toast .toast-msg {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">⚡</div>
+            <div>
+                <h1>Dumsor<span>Watch</span></h1>
+                <small>Ghana Power Intelligence</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a href="#" class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="#" data-page="report"><i class="fas fa-exclamation-triangle"></i> Report Outage</a>
+            <a href="#" data-page="map"><i class="fas fa-map"></i> Outage Map</a>
+            <a href="#" data-page="history"><i class="fas fa-clock-rotate-left"></i> History</a>
+
+            <div class="nav-label" style="margin-top:12px;">Intelligence</div>
+            <a href="#" data-page="predictions"><i class="fas fa-brain"></i> Predictions</a>
+            <a href="#" data-page="sensors"><i class="fas fa-microchip"></i> Sensors <span class="badge">4</span></a>
+
+            <div class="nav-label" style="margin-top:12px;">System</div>
+            <a href="#" data-page="settings"><i class="fas fa-gear"></i> Settings</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            <span>System Online · v2.4</span>
+        </div>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="main" id="mainContent">
+
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="hamburger" id="hamburgerBtn" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="pageTitle">Dashboard</h2>
+                <p id="pageSubtitle">Real-time overview of Ghana's power status</p>
+            </div>
+            <div class="topbar-right">
+                <span class="datetime" id="datetimeDisplay"><i class="far fa-clock"></i> Loading…</span>
+                <button class="btn-primary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+        </header>
+
+        <!-- ─── PAGE: DASHBOARD ─── -->
+        <div id="page-dashboard" class="page-content">
+
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label"><i class="fas fa-bolt" style="margin-right:4px;color:#facc15;"></i> Active Outages</div>
+                    <div class="stat-value red" id="statOutages">12</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up" style="color:#f87171;"></i> 3 more than yesterday</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label"><i class="fas fa-check-circle" style="margin-right:4px;color:#4ade80;"></i> Areas with Power</div>
+                    <div class="stat-value green" id="statPowerOn">38</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up" style="color:#4ade80;"></i> 84% coverage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label"><i class="fas fa-users" style="margin-right:4px;color:#60a5fa;"></i> Reports Today</div>
+                    <div class="stat-value blue" id="statReports">47</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up" style="color:#60a5fa;"></i> 12 from sensors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label"><i class="fas fa-clock" style="margin-right:4px;color:#facc15;"></i> Avg. Outage Duration</div>
+                    <div class="stat-value yellow" id="statAvgDuration">2.4h</div>
+                    <div class="stat-change"><i class="fas fa-arrow-down" style="color:#4ade80;"></i> 18 min improvement</div>
+                </div>
+            </div>
+
+            <!-- Row: Map + Report Quick -->
+            <div class="row">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-map-location-dot"></i> Live Outage Map</h3>
+                        <span style="font-size:12px;color:var(--text-muted);">Affected areas highlighted</span>
+                    </div>
+                    <div class="map-container" id="liveMapContainer">
+                        <canvas id="liveMapCanvas"></canvas>
+                        <div class="map-overlay"><i class="fas fa-circle-dot"></i> 12 active outages</div>
+                        <div class="map-legend">
+                            <span><span class="dot green"></span> On</span>
+                            <span><span class="dot red"></span> Outage</span>
+                            <span><span class="dot yellow"></span> Predicted</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-chart-line"></i> 7‑Day Outage Trend</h3>
+                        <span style="font-size:12px;color:var(--text-muted);">Last 7 days</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Outages -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-clock-rotate-left"></i> Recent Outages</h3>
+                    <div class="panel-actions">
+                        <button id="viewAllHistoryBtn">View All</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Reported</th>
+                                <th>Started</th>
+                                <th>Ended</th>
+                                <th>Duration</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOutagesBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: REPORT ─── -->
+        <div id="page-report" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-pen-to-square"></i> Report a Power Outage</h3>
+                    <span style="font-size:12px;color:var(--text-muted);">Manual report — helps the community</span>
+                </div>
+                <form class="report-form" id="reportForm">
+                    <div class="form-group">
+                        <label for="reportLocation"><i class="fas fa-location-dot"></i> Location</label>
+                        <select id="reportLocation">
+                            <option value="Accra Central">Accra Central</option>
+                            <option value="Accra East">Accra East</option>
+                            <option value="Accra West">Accra West</option>
+                            <option value="Kumasi Central">Kumasi Central</option>
+                            <option value="Kumasi North">Kumasi North</option>
+                            <option value="Tema">Tema</option>
+                            <option value="Takoradi">Takoradi</option>
+                            <option value="Tamale">Tamale</option>
+                            <option value="Cape Coast">Cape Coast</option>
+                            <option value="Koforidua">Koforidua</option>
+                            <option value="Sunyani">Sunyani</option>
+                            <option value="Ho">Ho</option>
+                            <option value="Bolgatanga">Bolgatanga</option>
+                            <option value="Wa">Wa</option>
+                            <option value="Other">Other (type below)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1 1 200px;">
+                        <label for="reportCustomLocation">Custom Location</label>
+                        <input type="text" id="reportCustomLocation" placeholder="e.g. Dansoman, Accra" />
+                    </div>
+                    <div class="form-group" style="flex:0 0 130px;">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-report off" id="reportOffBtn">
+                            <i class="fas fa-power-off"></i> Report OFF
+                        </button>
+                    </div>
+                    <div class="form-group" style="flex:0 0 130px;">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn-report on" id="reportOnBtn">
+                            <i class="fas fa-plug"></i> Report ON
+                        </button>
+                    </div>
+                </form>
+                <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">
+                    <i class="fas fa-info-circle"></i> Your report helps us build a more accurate outage map and improve predictions.
+                </p>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-list"></i> Your Recent Reports</h3>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Location</th><th>Type</th><th>Reported</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="userReportsBody">
+                            <tr><td colspan="4" class="text-center text-muted" style="padding:24px;">No reports yet. Use the form above!</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: MAP ─── -->
+        <div id="page-map" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-map"></i> National Outage Map</h3>
+                    <span style="font-size:12px;color:var(--text-muted);">Click a region for details</span>
+                </div>
+                <div class="map-container" style="height:400px;">
+                    <canvas id="fullMapCanvas"></canvas>
+                    <div class="map-overlay"><i class="fas fa-circle-dot"></i> Interactive · 12 active</div>
+                    <div class="map-legend">
+                        <span><span class="dot green"></span> On</span>
+                        <span><span class="dot red"></span> Outage</span>
+                        <span><span class="dot yellow"></span> Predicted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: HISTORY ─── -->
+        <div id="page-history" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-clock-rotate-left"></i> Complete Outage History</h3>
+                    <div class="panel-actions">
+                        <button id="exportHistoryBtn"><i class="fas fa-download"></i> Export CSV</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Started</th>
+                                <th>Ended</th>
+                                <th>Duration</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-chart-bar"></i> Outages by Region</h3>
+                    </div>
+                    <div class="chart-wrapper" style="height:180px;">
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-clock"></i> Peak Outage Hours</h3>
+                    </div>
+                    <div class="chart-wrapper" style="height:180px;">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: PREDICTIONS ─── -->
+        <div id="page-predictions" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-brain"></i> AI‑Powered Outage Predictions</h3>
+                    <span style="font-size:12px;color:var(--text-muted);">Based on historical patterns & weather</span>
+                </div>
+                <div class="prediction-grid" id="predictionGrid">
+                    <!-- Filled by JS -->
+                </div>
+                <p style="font-size:12px;color:var(--text-muted);margin-top:16px;">
+                    <i class="fas fa-robot"></i> Model: LSTM + XGBoost · Confidence > 82%
+                </p>
+            </div>
+
+            <div class="row">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-cloud-sun"></i> Weather Impact</h3>
+                    </div>
+                    <div class="chart-wrapper" style="height:160px;">
+                        <canvas id="weatherChart"></canvas>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-lightbulb"></i> Prediction Confidence</h3>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:20px;height:140px;padding:0 12px;">
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                                <span>Today's prediction</span>
+                                <span style="color:var(--ghana-yellow);font-weight:700;">87%</span>
+                            </div>
+                            <div style="background:var(--bg-secondary);height:10px;border-radius:20px;overflow:hidden;">
+                                <div style="width:87%;height:100%;background:linear-gradient(90deg,#facc15,#f87171);border-radius:20px;"></div>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;">
+                                <span>Low</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div style="text-align:center;border-left:1px solid var(--border-color);padding-left:20px;">
+                            <div style="font-size:28px;font-weight:800;color:#facc15;">4</div>
+                            <div style="font-size:11px;color:var(--text-muted);">Predicted outages</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: SENSORS ─── -->
+        <div id="page-sensors" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-microchip"></i> ESP32 Sensor Network</h3>
+                    <span style="font-size:12px;color:var(--text-muted);">Wi‑Fi connected · Auto‑reporting</span>
+                </div>
+                <div class="sensor-grid" id="sensorGrid">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-chart-simple"></i> Sensor Data Stream</h3>
+                </div>
+                <div class="chart-wrapper" style="height:160px;">
+                    <canvas id="sensorChart"></canvas>
+                </div>
+                <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">
+                    <i class="fas fa-wifi"></i> Last update: <span id="sensorLastUpdate">just now</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- ─── PAGE: SETTINGS ─── -->
+        <div id="page-settings" class="page-content" style="display:none;">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-gear"></i> System Settings</h3>
+                </div>
+                <div style="display:grid;gap:18px;max-width:500px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">
+                        <div><strong>Auto‑refresh data</strong><br /><span style="font-size:12px;color:var(--text-muted);">Update dashboard every 30s</span></div>
+                        <label style="position:relative;display:inline-block;width:48px;height:26px;">
+                            <input type="checkbox" checked style="opacity:0;width:0;height:0;" />
+                            <span style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--border-color);border-radius:26px;transition:0.3s;cursor:pointer;"></span>
+                            <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">
+                        <div><strong>ML Predictions</strong><br /><span style="font-size:12px;color:var(--text-muted);">Enable AI forecasting</span></div>
+                        <label style="position:relative;display:inline-block;width:48px;height:26px;">
+                            <input type="checkbox" checked style="opacity:0;width:0;height:0;" />
+                            <span style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--border-color);border-radius:26px;transition:0.3s;cursor:pointer;"></span>
+                            <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">
+                        <div><strong>Push Notifications</strong><br /><span style="font-size:12px;color:var(--text-muted);">Alert when power changes</span></div>
+                        <label style="position:relative;display:inline-block;width:48px;height:26px;">
+                            <input type="checkbox" style="opacity:0;width:0;height:0;" />
+                            <span style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--border-color);border-radius:26px;transition:0.3s;cursor:pointer;"></span>
+                            <span style="position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></span>
+                        </label>
+                    </div>
+                    <div style="padding:8px 0;">
+                        <button style="background:var(--ghana-red);border:none;color:#fff;padding:10px 24px;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;transition:var(--transition);">
+                            <i class="fas fa-database"></i> Clear Cache
+                        </button>
+                        <button style="background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);padding:10px 24px;border-radius:var(--radius-sm);font-weight:600;cursor:pointer;margin-left:10px;transition:var(--transition);">
+                            <i class="fas fa-file-export"></i> Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ─── TOAST CONTAINER ─── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  DATA STORE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const locations = [
+            'Accra Central', 'Accra East', 'Accra West', 'Kumasi Central',
+            'Kumasi North', 'Tema', 'Takoradi', 'Tamale', 'Cape Coast',
+            'Koforidua', 'Sunyani', 'Ho', 'Bolgatanga', 'Wa'
+        ];
+
+        const outageEvents = [
+            { location: 'Accra Central', started: '2026-07-13 08:15', ended: '2026-07-13 10:45', source: 'Sensor',
+            status: 'Resolved' },
+            { location: 'Kumasi Central', started: '2026-07-13 09:30', ended: '2026-07-13 12:10', source: 'User',
+            status: 'Resolved' },
+            { location: 'Tema', started: '2026-07-13 11:00', ended: null, source: 'Sensor', status: 'Active' },
+            { location: 'Takoradi', started: '2026-07-13 10:20', ended: null, source: 'User', status: 'Active' },
+            { location: 'Accra West', started: '2026-07-13 06:45', ended: '2026-07-13 08:30', source: 'Sensor',
+                status: 'Resolved' },
+            { location: 'Tamale', started: '2026-07-13 07:10', ended: '2026-07-13 09:40', source: 'User',
+            status: 'Resolved' },
+            { location: 'Cape Coast', started: '2026-07-12 22:15', ended: '2026-07-13 01:30', source: 'Sensor',
+                status: 'Resolved' },
+            { location: 'Koforidua', started: '2026-07-13 13:00', ended: null, source: 'Sensor', status: 'Active' },
+            { location: 'Sunyani', started: '2026-07-13 05:30', ended: '2026-07-13 07:50', source: 'User',
+            status: 'Resolved' },
+            { location: 'Ho', started: '2026-07-12 20:00', ended: '2026-07-12 23:20', source: 'Sensor', status: 'Resolved' },
+            { location: 'Bolgatanga', started: '2026-07-13 10:45', ended: null, source: 'User', status: 'Active' },
+            { location: 'Wa', started: '2026-07-13 04:15', ended: '2026-07-13 07:00', source: 'Sensor', status: 'Resolved' },
+        ];
+
+        const sensorData = [
+            { id: 'ESP-01', location: 'Accra Central', status: 'online', lastSeen: '2 min ago' },
+            { id: 'ESP-02', location: 'Kumasi Central', status: 'online', lastSeen: '1 min ago' },
+            { id: 'ESP-03', location: 'Tema', status: 'online', lastSeen: '3 min ago' },
+            { id: 'ESP-04', location: 'Takoradi', status: 'offline', lastSeen: '18 min ago' },
+        ];
+
+        const predictions = [
+            { location: 'Accra East', time: '14:30', confidence: 89 },
+            { location: 'Tema', time: '15:45', confidence: 84 },
+            { location: 'Kumasi North', time: '16:20', confidence: 76 },
+            { location: 'Cape Coast', time: '18:10', confidence: 81 },
+        ];
+
+        // ─── helper ───
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function randItem(arr) { return arr[rand(0, arr.length - 1)]; }
+
+        function timeAgo(date) {
+            const diff = Math.floor((Date.now() - new Date(date)) / 60000);
+            if (diff < 1) return 'just now';
+            if (diff < 60) return diff + 'm ago';
+            const h = Math.floor(diff / 60);
+            return h + 'h ' + (diff % 60) + 'm ago';
+        }
+
+        function formatDate(d) {
+            if (!d) return '—';
+            const dt = new Date(d);
+            return dt.toLocaleString('en-GH', { hour12: false });
+        }
+
+        function formatDuration(start, end) {
+            if (!end) return 'Active';
+            const s = new Date(start).getTime();
+            const e = new Date(end).getTime();
+            const diff = Math.floor((e - s) / 60000);
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            return h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                'Resolved': '<span class="status-badge on"><i class="fas fa-check"></i> Resolved</span>',
+                'Active': '<span class="status-badge off"><i class="fas fa-circle-exclamation"></i> Active</span>',
+                'Predicted': '<span class="status-badge predicted"><i class="fas fa-clock"></i> Predicted</span>'
+            };
+            return map[status] || status;
+        }
+
+        // ─── Toast ───
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const icons = { success: 'fa-check-circle', error: 'fa-circle-exclamation', info: 'fa-circle-info' };
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span class="toast-msg">${message}</span>`;
+            container.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0';
+                setTimeout(() => el.remove(), 400); }, 3200);
+        }
+
+        // ─── Navigation ───
+        const pages = {
+            dashboard: { title: 'Dashboard', sub: 'Real-time overview of Ghana\'s power status' },
+            report: { title: 'Report Outage', sub: 'Manually report power outages or restoration' },
+            map: { title: 'Outage Map', sub: 'Interactive map of affected areas' },
+            history: { title: 'History', sub: 'Complete outage log and analytics' },
+            predictions: { title: 'Predictions', sub: 'AI‑powered outage forecasting' },
+            sensors: { title: 'Sensors', sub: 'ESP32 network status & data' },
+            settings: { title: 'Settings', sub: 'System configuration' },
+        };
+
+        let currentPage = 'dashboard';
+
+        function navigateTo(page) {
+            if (!pages[page]) return;
+            currentPage = page;
+            // hide all
+            document.querySelectorAll('.page-content').forEach(el => el.style.display = 'none');
+            const target = document.getElementById('page-' + page);
+            if (target) target.style.display = 'block';
+
+            // update topbar
+            document.getElementById('pageTitle').textContent = pages[page].title;
+            document.getElementById('pageSubtitle').textContent = pages[page].sub;
+
+            // sidebar active
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-nav a[data-page="${page}"]`);
+            if (link) link.classList.add('active');
+
+            // close sidebar on mobile
+            document.getElementById('sidebar').classList.remove('open');
+
+            // render page content
+            if (page === 'dashboard') renderDashboard();
+            if (page === 'history') renderHistory();
+            if (page === 'predictions') renderPredictions();
+            if (page === 'sensors') renderSensors();
+            if (page === 'report') renderReport();
+            if (page === 'map') renderMap();
+        }
+
+        document.querySelectorAll('.sidebar-nav a[data-page]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(a.dataset.page);
+            });
+        });
+
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        document.getElementById('viewAllHistoryBtn').addEventListener('click', () => navigateTo('history'));
+
+        // ─── Refresh ───
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            showToast('🔄 Data refreshed successfully', 'success');
+            renderDashboard();
+            if (currentPage === 'history') renderHistory();
+            if (currentPage === 'predictions') renderPredictions();
+            if (currentPage === 'sensors') renderSensors();
+        });
+
+        // ─── Clock ───
+        function updateClock() {
+            document.getElementById('datetimeDisplay').innerHTML =
+                `<i class="far fa-clock"></i> ${new Date().toLocaleString('en-GH', { hour12: false })}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  RENDER FUNCTIONS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderDashboard() {
+            // stats
+            const active = outageEvents.filter(e => e.status === 'Active').length;
+            const resolved = outageEvents.filter(e => e.status === 'Resolved').length;
+            const total = outageEvents.length;
+            const today = new Date().toDateString();
+            const todayReports = outageEvents.filter(e => new Date(e.started).toDateString() === today);
+            const avgDur = outageEvents.filter(e => e.ended).reduce((sum, e) => {
+                const s = new Date(e.started).getTime();
+                const en = new Date(e.ended).getTime();
+                return sum + (en - s);
+            }, 0) / (outageEvents.filter(e => e.ended).length || 1);
+            const avgHours = (avgDur / 3600000).toFixed(1);
+
+            document.getElementById('statOutages').textContent = active;
+            document.getElementById('statPowerOn').textContent = locations.length - active;
+            document.getElementById('statReports').textContent = todayReports.length || rand(4, 15);
+            document.getElementById('statAvgDuration').textContent = avgHours + 'h';
+
+            // recent outages table
+            const tbody = document.getElementById('recentOutagesBody');
+            const recent = outageEvents.slice(-6).reverse();
+            tbody.innerHTML = recent.map(e => `
+                <tr>
+                    <td><strong>${e.location}</strong></td>
+                    <td>${timeAgo(e.started)}</td>
+                    <td>${formatDate(e.started)}</td>
+                    <td>${e.ended ? formatDate(e.ended) : '—'}</td>
+                    <td>${formatDuration(e.started, e.ended)}</td>
+                    <td><span style="font-size:11px;background:var(--bg-secondary);padding:2px 10px;border-radius:20px;">${e.source}</span></td>
+                    <td>${getStatusBadge(e.status)}</td>
+                </tr>
+            `).join('');
+
+            // charts
+            renderTrendChart();
+            renderLiveMap();
+        }
+
+        // ─── Trend Chart ───
+        let trendChartInstance = null;
+
+        function renderTrendChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            if (trendChartInstance) trendChartInstance.destroy();
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const data = days.map(() => rand(2, 9));
+
+            trendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Outages',
+                        data: data,
+                        borderColor: '#facc15',
+                        backgroundColor: 'rgba(250, 204, 21, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#facc15',
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1C2533', borderColor: '#2A3A4E' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6A7F99' } },
+                        x: { grid: { display: false }, ticks: { color: '#6A7F99' } }
+                    }
+                }
+            });
+        }
+
+        // ─── Live Map ───
+        function renderLiveMap() {
+            const canvas = document.getElementById('liveMapCanvas');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = canvas.parentElement.clientWidth || 600;
+            canvas.height = canvas.parentElement.clientHeight || 280;
+            const ctx = canvas.getContext('2d');
+
+            const w = canvas.width,
+                h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // background
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, '#0B1A2E');
+            grad.addColorStop(1, '#162435');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // draw a simple grid / map abstraction
+            const cols = 6,
+                rows = 5;
+            const cellW = w / cols,
+                cellH = h / rows;
+
+            // regions (simulated)
+            const regions = [
+                { x: 1, y: 0, label: 'Accra', status: 'outage' },
+                { x: 3, y: 1, label: 'Kumasi', status: 'on' },
+                { x: 0, y: 2, label: 'Takoradi', status: 'outage' },
+                { x: 4, y: 2, label: 'Tema', status: 'outage' },
+                { x: 2, y: 3, label: 'Tamale', status: 'on' },
+                { x: 5, y: 1, label: 'Ho', status: 'on' },
+                { x: 1, y: 4, label: 'Cape Coast', status: 'outage' },
+                { x: 3, y: 4, label: 'Sunyani', status: 'on' },
+            ];
+
+            regions.forEach(r => {
+                const cx = r.x * cellW + cellW / 2;
+                const cy = r.y * cellH + cellH / 2;
+                const radius = Math.min(cellW, cellH) * 0.3;
+
+                const color = r.status === 'outage' ? 'rgba(248,113,113,0.85)' :
+                    r.status === 'on' ? 'rgba(74,222,128,0.85)' :
+                    'rgba(250,204,21,0.85)';
+
+                // glow
+                const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius * 2);
+                glow.addColorStop(0, color);
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius * 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // circle
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // label
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(r.label, cx, cy + radius + 16);
+            });
+
+            // connection lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < regions.length - 1; i++) {
+                const a = regions[i],
+                    b = regions[i + 1];
+                const ax = a.x * cellW + cellW / 2,
+                    ay = a.y * cellH + cellH / 2;
+                const bx = b.x * cellW + cellW / 2,
+                    by = b.y * cellH + cellH / 2;
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(bx, by);
+                ctx.stroke();
+            }
+        }
+
+        // ─── Full Map ───
+        function renderMap() {
+            const canvas = document.getElementById('fullMapCanvas');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = canvas.parentElement.clientWidth || 600;
+            canvas.height = canvas.parentElement.clientHeight || 400;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width,
+                h = canvas.height;
+
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, '#0B1A2E');
+            grad.addColorStop(1, '#162435');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // draw a more detailed map with regions
+            const regions = [
+                { x: 0.2, y: 0.15, label: 'Upper West', status: 'on' },
+                { x: 0.55, y: 0.1, label: 'Upper East', status: 'on' },
+                { x: 0.3, y: 0.3, label: 'Northern', status: 'outage' },
+                { x: 0.5, y: 0.35, label: 'North East', status: 'on' },
+                { x: 0.15, y: 0.5, label: 'Bono', status: 'on' },
+                { x: 0.35, y: 0.55, label: 'Ashanti', status: 'outage' },
+                { x: 0.65, y: 0.5, label: 'Volta', status: 'on' },
+                { x: 0.1, y: 0.7, label: 'Western', status: 'outage' },
+                { x: 0.3, y: 0.8, label: 'Central', status: 'outage' },
+                { x: 0.55, y: 0.7, label: 'Greater Accra', status: 'outage' },
+                { x: 0.75, y: 0.65, label: 'Eastern', status: 'on' },
+            ];
+
+            regions.forEach(r => {
+                const cx = r.x * w;
+                const cy = r.y * h;
+                const radius = Math.min(w, h) * 0.055;
+
+                const color = r.status === 'outage' ? 'rgba(248,113,113,0.9)' :
+                    r.status === 'on' ? 'rgba(74,222,128,0.9)' :
+                    'rgba(250,204,21,0.9)';
+
+                const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius * 2.5);
+                glow.addColorStop(0, color);
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '11px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(r.label, cx, cy + radius + 18);
+            });
+        }
+
+        // ─── History ───
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            const all = outageEvents.slice().reverse();
+            tbody.innerHTML = all.map(e => `
+                <tr>
+                    <td><strong>${e.location}</strong></td>
+                    <td>${formatDate(e.started)}</td>
+                    <td>${e.ended ? formatDate(e.ended) : '—'}</td>
+                    <td>${formatDuration(e.started, e.ended)}</td>
+                    <td><span style="font-size:11px;background:var(--bg-secondary);padding:2px 10px;border-radius:20px;">${e.source}</span></td>
+                    <td>${getStatusBadge(e.status)}</td>
+                </tr>
+            `).join('');
+
+            // region chart
+            const regionCtx = document.getElementById('regionChart').getContext('2d');
+            if (window.regionChartInstance) window.regionChartInstance.destroy();
+            const regionCounts = {};
+            outageEvents.forEach(e => { regionCounts[e.location] = (regionCounts[e.location] || 0) + 1; });
+            const labels = Object.keys(regionCounts).slice(0, 8);
+            const data = labels.map(l => regionCounts[l]);
+            window.regionChartInstance = new Chart(regionCtx, {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'Outages', data, backgroundColor: 'rgba(250,204,21,0.7)',
+                        borderRadius: 6 }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#6A7F99' } }, x: { grid: { display: false }, ticks: { color: '#6A7F99',
+                                fontSize: 9 } } }
+                }
+            });
+
+            // hourly chart
+            const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+            if (window.hourlyChartInstance) window.hourlyChartInstance.destroy();
+            const hours = ['0-2', '2-4', '4-6', '6-8', '8-10', '10-12', '12-14', '14-16', '16-18', '18-20', '20-22', '22-24'];
+            const hourlyData = hours.map(() => rand(1, 6));
+            window.hourlyChartInstance = new Chart(hourlyCtx, {
+                type: 'bar',
+                data: { labels: hours, datasets: [{ label: 'Outages', data: hourlyData, backgroundColor: 'rgba(248,113,113,0.7)',
+                        borderRadius: 4 }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#6A7F99' } }, x: { grid: { display: false }, ticks: { color: '#6A7F99',
+                                fontSize: 8 } } }
+                }
+            });
+        }
+
+        // ─── Predictions ───
+        function renderPredictions() {
+            const grid = document.getElementById('predictionGrid');
+            grid.innerHTML = predictions.map(p => `
+                <div class="prediction-item">
+                    <div class="time">${p.time}</div>
+                    <div class="location">${p.location}</div>
+                    <div class="prob">Confidence <strong>${p.confidence}%</strong></div>
+                </div>
+            `).join('');
+
+            // weather chart
+            const wCtx = document.getElementById('weatherChart').getContext('2d');
+            if (window.weatherChartInstance) window.weatherChartInstance.destroy();
+            window.weatherChartInstance = new Chart(wCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        { label: 'Temperature (°C)', data: [28, 30, 27, 29, 31, 28, 26], borderColor: '#f87171',
+                            tension: 0.3, pointRadius: 3 },
+                        { label: 'Rainfall (mm)', data: [2, 0, 5, 1, 0, 3, 8], borderColor: '#60a5fa',
+                            tension: 0.3, pointRadius: 3, borderDash: [4, 4] }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#9AB0CC', font: { size: 10 } } } },
+                    scales: { y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6A7F99' } },
+                        x: { grid: { display: false }, ticks: { color: '#6A7F99' } } }
+                }
+            });
+        }
+
+        // ─── Sensors ───
+        function renderSensors() {
+            const grid = document.getElementById('sensorGrid');
+            grid.innerHTML = sensorData.map(s => `
+                <div class="sensor-card">
+                    <div class="sensor-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="sensor-info">
+                        <div class="name">${s.id}</div>
+                        <div class="status">
+                            <span class="dot ${s.status === 'online' ? 'online' : 'offline'}"></span>
+                            ${s.status === 'online' ? 'Online' : 'Offline'} · ${s.location}
+                            <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">${s.lastSeen}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // sensor chart (simulated stream)
+            const sCtx = document.getElementById('sensorChart').getContext('2d');
+            if (window.sensorChartInstance) window.sensorChartInstance.destroy();
+            const points = Array.from({ length: 20 }, () => rand(0, 1));
+            window.sensorChartInstance = new Chart(sCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 20 }, (_, i) => `${i*3}s`),
+                    datasets: [{
+                        label: 'Power State (1=ON, 0=OFF)',
+                        data: points,
+                        borderColor: '#4ade80',
+                        backgroundColor: 'rgba(74,222,128,0.1)',
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { min: -0.2, max: 1.2, grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#6A7F99', stepSize: 0.5 } }, x: { grid: { display: false },
+                            ticks: { color: '#6A7F99', fontSize: 8 } } }
+                }
+            });
+
+            document.getElementById('sensorLastUpdate').textContent = 'just now';
+        }
+
+        // ─── Report ───
+        let userReports = [];
+
+        function renderReport() {
+            const tbody = document.getElementById('userReportsBody');
+            if (userReports.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="4" class="text-center text-muted" style="padding:24px;">No reports yet. Use the form above!</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = userReports.slice().reverse().map(r => `
+                <tr>
+                    <td><strong>${r.location}</strong></td>
+                    <td><span class="status-badge ${r.type === 'OFF' ? 'off' : 'on'}">${r.type}</span></td>
+                    <td>${formatDate(r.time)}</td>
+                    <td><span style="color:var(--text-secondary);">Submitted</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ─── Report Form ───
+        document.getElementById('reportForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            reportOutage('OFF');
+        });
+
+        document.getElementById('reportOffBtn').addEventListener('click', () => reportOutage('OFF'));
+        document.getElementById('reportOnBtn').addEventListener('click', () => reportOutage('ON'));
+
+        function reportOutage(type) {
+            const locationSelect = document.getElementById('reportLocation');
+            const custom = document.getElementById('reportCustomLocation').value.trim();
+            let location = locationSelect.value;
+            if (location === 'Other' && custom) location = custom;
+            else if (location === 'Other' && !custom) {
+                showToast('Please enter a custom location or select one from the list.', 'error');
+                return;
+            }
+
+            const report = {
+                location,
+                type,
+                time: new Date().toISOString(),
+            };
+
+            userReports.push(report);
+
+            // also add to outageEvents
+            const event = {
+                location,
+                started: new Date().toISOString(),
+                ended: type === 'ON' ? new Date().toISOString() : null,
+                source: 'User',
+                status: type === 'OFF' ? 'Active' : 'Resolved'
+            };
+            outageEvents.push(event);
+
+            showToast(`✅ ${type === 'OFF' ? 'Outage' : 'Restoration'} reported for ${location}`, 'success');
+
+            // reset custom field
+            if (locationSelect.value === 'Other') {
+                document.getElementById('reportCustomLocation').value = '';
+            }
+
+            renderReport();
+            renderDashboard();
+            // update other pages if visible
+            if (currentPage === 'history') renderHistory();
+        }
+
+        // ─── Export History ───
+        document.getElementById('exportHistoryBtn')?.addEventListener('click', () => {
+            let csv = 'Location,Started,Ended,Duration,Source,Status\n';
+            outageEvents.forEach(e => {
+                csv +=
+                    `${e.location},${e.started},${e.ended || ''},${formatDuration(e.started, e.ended)},${e.source},${e.status}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dumsor_history_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📥 History exported as CSV', 'success');
+        });
+
+        // ─── Init ───
+        navigateTo('dashboard');
+
+        // resize maps on window resize
+        window.addEventListener('resize', () => {
+            if (currentPage === 'dashboard') renderLiveMap();
+            if (currentPage === 'map') renderMap();
+        });
+
+        // ─── Simulate sensor auto-report ───
+        setInterval(() => {
+            // occasionally add a random sensor outage
+            if (Math.random() < 0.08) {
+                const loc = randItem(locations);
+                const event = {
+                    location: loc,
+                    started: new Date().toISOString(),
+                    ended: null,
+                    source: 'Sensor',
+                    status: 'Active'
+                };
+                outageEvents.push(event);
+                showToast(`⚡ Sensor detected outage in ${loc}`, 'error');
+                if (currentPage === 'dashboard') renderDashboard();
+                if (currentPage === 'history') renderHistory();
+            }
+            // occasionally resolve one
+            if (Math.random() < 0.06) {
+                const active = outageEvents.filter(e => e.status === 'Active');
+                if (active.length > 0) {
+                    const pick = randItem(active);
+                    pick.ended = new Date().toISOString();
+                    pick.status = 'Resolved';
+                    showToast(`🔌 Power restored in ${pick.location} (sensor)`, 'success');
+                    if (currentPage === 'dashboard') renderDashboard();
+                    if (currentPage === 'history') renderHistory();
+                }
+            }
+        }, 12000);
+
+        console.log('⚡ DumsorWatch — AI + IoT Smart System for Ghana');
+        console.log('📊 Built with ❤️ to help communities stay informed.');
+    </script>
+
+</body>
+</html>
